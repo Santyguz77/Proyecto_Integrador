@@ -1,0 +1,376 @@
+<div class="container">
+    <div class="content">
+      <div style="font-size: 24px;">Reconocimiento de frutas y precio.</div>
+      <button type="button" class="button" onclick="init(); this.style.display='none';">
+        <span class="fold"></span>
+        <div class="points_wrapper">
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+          <i class="point"></i>
+        </div>
+        <span class="inner">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+            <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37"></polyline>
+          </svg>
+          Reconocer
+        </span>
+      </button>
+      <div id="webcam-container"></div>
+      <div id="label-container"></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script type="text/javascript">
+  
+      const URL = "https://teachablemachine.withgoogle.com/models/B-eovzLvd/";
+  
+      let model, webcam, labelContainer, maxPredictions;
+      let recognizedItem = "";
+  
+      
+      async function init() {
+          const modelURL = URL + "model.json";
+          const metadataURL = URL + "metadata.json";
+  
+          model = await tmImage.load(modelURL, metadataURL);
+          maxPredictions = model.getTotalClasses();
+  
+          const flip = true; 
+          webcam = new tmImage.Webcam(400, 400, flip); // Aumentar el tamaño a 400x400
+          await webcam.setup(); 
+          await webcam.play();
+          window.requestAnimationFrame(loop);
+  
+          document.getElementById("webcam-container").appendChild(webcam.canvas);
+          labelContainer = document.getElementById("label-container");
+          for (let i = 0; i < maxPredictions; i++) { 
+              labelContainer.appendChild(document.createElement("div"));
+          }
+  
+          // Crear y agregar el nuevo botón
+          // const newButton = document.createElement("button");
+          // newButton.innerText = "Terminar";
+          // newButton.className = "button";
+          // newButton.style.zIndex = "10"; // Asegurar que el botón esté al frente
+          // newButton.style.position = "relative"; // Asegurar que el botón esté en una posición relativa
+          // newButton.style.color = "white"; // Asegurar que el texto sea visible
+          // newButton.onclick = function() {
+          //     location.reload(); // Recargar la página
+          // };
+          // document.getElementById("webcam-container").appendChild(newButton);
+      }
+  
+      async function loop() {
+          webcam.update();
+          await predict();
+          window.requestAnimationFrame(loop);
+      }
+  
+      
+      async function predict() {
+          const prediction = await model.predict(webcam.canvas);
+          for (let i = 0; i < maxPredictions; i++) {
+              const classPrediction = ""; // No mostrar nada
+              labelContainer.childNodes[i].innerHTML = classPrediction;
+              if (prediction[i].probability > 0.9) {
+                  recognizedItem = prediction[i].className;
+                  showAnimation(recognizedItem);
+                  setTimeout(() => {
+                      window.location.href = `peso.html?item=${encodeURIComponent(recognizedItem)}`;
+                  }, 5000);
+                  break;
+              }
+          }
+      }
+  
+      function showAnimation(item) {
+          const animationContainer = document.createElement("div");
+          animationContainer.className = "animation-container";
+          animationContainer.innerHTML = `<div class="animation-content">Reconocido: ${item}</div>`;
+          document.body.appendChild(animationContainer);
+          setTimeout(() => {
+              animationContainer.remove();
+          }, 5000);
+      }
+  </script>
+  <style>
+  /* From Uiverse.io by ilkhoeri */ 
+  .button {
+    --h-button: 48px;
+    --w-button: 102px;
+    --round: 0.75rem;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    background: radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgba(223, 113, 255, 0.8) 0%,
+        rgba(223, 113, 255, 0) 100%
+      ),
+      linear-gradient(0deg, #7a5af8, #7a5af8);
+    border-radius: var(--round);
+    border: none;
+    outline: none;
+    padding: 12px 18px;
+  }
+  .button::before,
+  .button::after {
+    content: "";
+    position: absolute;
+    inset: var(--space);
+    transition: all 0.5s ease-in-out;
+    border-radius: calc(var(--round) - var(--space));
+    z-index: 0;
+  }
+  .button::before {
+    --space: 1px;
+    background: linear-gradient(
+      177.95deg,
+      rgba(255, 255, 255, 0.19) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+  .button::after {
+    --space: 2px;
+    background: radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgba(223, 113, 255, 0.8) 0%,
+        rgba(223, 113, 255, 0) 100%
+      ),
+      linear-gradient(0deg, #7a5af8, #7a5af8);
+  }
+  .button:active {
+    transform: scale(0.95);
+  }
+  
+  .fold {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    transition: all 0.5s ease-in-out;
+    background: radial-gradient(
+      100% 75% at 55%,
+      rgba(223, 113, 255, 0.8) 0%,
+      rgba(223, 113, 255, 0) 100%
+    );
+    box-shadow: 0 0 3px black;
+    border-bottom-left-radius: 0.5rem;
+    border-top-right-radius: var(--round);
+  }
+  .fold::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150%;
+    height: 150%;
+    transform: rotate(45deg) translateX(0%) translateY(-18px);
+    background-color: #e8e8e8;
+    pointer-events: none;
+  }
+  .button:hover .fold {
+    margin-top: -1rem;
+    margin-right: -1rem;
+  }
+  
+  .points_wrapper {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .points_wrapper .point {
+    bottom: -10px;
+    position: absolute;
+    animation: floating-points infinite ease-in-out;
+    pointer-events: none;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 9999px;
+  }
+  @keyframes floating-points {
+    0% {
+      transform: translateY(0);
+    }
+    85% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(-55px);
+      opacity: 0;
+    }
+  }
+  .points_wrapper .point:nth-child(1) {
+    left: 10%;
+    opacity: 1;
+    animation-duration: 2.35s;
+    animation-delay: 0.2s;
+  }
+  .points_wrapper .point:nth-child(2) {
+    left: 30%;
+    opacity: 0.7;
+    animation-duration: 2.5s;
+    animation-delay: 0.5s;
+  }
+  .points_wrapper .point:nth-child(3) {
+    left: 25%;
+    opacity: 0.8;
+    animation-duration: 2.2s;
+    animation-delay: 0.1s;
+  }
+  .points_wrapper .point:nth-child(4) {
+    left: 44%;
+    opacity: 0.6;
+    animation-duration: 2.05s;
+  }
+  .points_wrapper .point:nth-child(5) {
+    left: 50%;
+    opacity: 1;
+    animation-duration: 1.9s;
+  }
+  .points_wrapper .point:nth-child(6) {
+    left: 75%;
+    opacity: 0.5;
+    animation-duration: 1.5s;
+    animation-delay: 1.5s;
+  }
+  .points_wrapper .point:nth-child(7) {
+    left: 88%;
+    opacity: 0.9;
+    animation-duration: 2.2s;
+    animation-delay: 0.2s;
+  }
+  .points_wrapper .point:nth-child(8) {
+    left: 58%;
+    opacity: 0.8;
+    animation-duration: 2.25s;
+    animation-delay: 0.2s;
+  }
+  .points_wrapper .point:nth-child(9) {
+    left: 98%;
+    opacity: 0.6;
+    animation-duration: 2.6s;
+    animation-delay: 0.1s;
+  }
+  .points_wrapper .point:nth-child(10) {
+    left: 65%;
+    opacity: 1;
+    animation-duration: 2.5s;
+    animation-delay: 0.2s;
+  }
+  
+  .inner {
+    z-index: 2;
+    gap: 6px;
+    position: relative;
+    width: 100%;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  .inner svg.icon {
+    width: 18px;
+    height: 18px;
+    transition: fill 0.1s linear;
+  }
+  
+  .button:focus svg.icon {
+    fill: white;
+  }
+  .button:hover svg.icon {
+    fill: transparent;
+    animation:
+      dasharray 1s linear forwards,
+      filled 0.1s linear forwards 0.95s;
+  }
+  @keyframes dasharray {
+    from {
+      stroke-dasharray: 0 0 0 0;
+    }
+    to {
+      stroke-dasharray: 68 68 0 0;
+    }
+  }
+  @keyframes filled {
+    to {
+      fill: white;
+    }
+  }
+  
+  /* From Uiverse.io by uiverse-astronaut */ 
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .container {
+    width: 100%;
+    height: 100vh;
+    background-color: #e5e5f7;
+    background-image: radial-gradient(#444cf7 10%, transparent 10%),
+                        radial-gradient(#444cf7 10%, transparent 10%);
+    background-size: 100px 100px;
+    background-position: 0 0, 50px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .content {
+    text-align: center;
+  }
+  
+  .webcam-section {
+    width: 400px; /* Aumentar el tamaño a 400px */
+    height: 400px; /* Aumentar el tamaño a 400px */
+    display: inline-block;
+    margin: 10px;
+  }
+  
+  .animation-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    animation: fadeInOut 5s;
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+  }
+  </style>

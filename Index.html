@@ -30,7 +30,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script type="text/javascript">
   
-      const URL = "https://teachablemachine.withgoogle.com/models/B-eovzLvd/";
+      const URL = "https://teachablemachine.withgoogle.com/models/sB6WIaOPi/"; //https://teachablemachine.withgoogle.com/models/B-eovzLvd/ 
   
       let model, webcam, labelContainer, maxPredictions;
       let recognizedItem = "";
@@ -55,17 +55,6 @@
               labelContainer.appendChild(document.createElement("div"));
           }
   
-          // Crear y agregar el nuevo botón
-          // const newButton = document.createElement("button");
-          // newButton.innerText = "Terminar";
-          // newButton.className = "button";
-          // newButton.style.zIndex = "10"; // Asegurar que el botón esté al frente
-          // newButton.style.position = "relative"; // Asegurar que el botón esté en una posición relativa
-          // newButton.style.color = "white"; // Asegurar que el texto sea visible
-          // newButton.onclick = function() {
-          //     location.reload(); // Recargar la página
-          // };
-          // document.getElementById("webcam-container").appendChild(newButton);
       }
   
       async function loop() {

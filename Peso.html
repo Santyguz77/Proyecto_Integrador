@@ -38,6 +38,7 @@
         <div class="content">
             <h1>Peso del Ítem</h1>
             <p id="recognized-item"></p>
+            <p id="item-price"></p> <!-- Nuevo elemento para mostrar el precio -->
         </div>
     </div>
     <script type="text/javascript">
@@ -46,9 +47,19 @@
             return urlParams.get(param);
         }
 
+        function getItemPrice(item) {
+            const prices = {
+                "limon": 1500,
+                // Puedes agregar más ítems y sus precios aquí
+            };
+            return prices[item.toLowerCase()] || "Precio no disponible";
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const item = getQueryParam("item");
             document.getElementById("recognized-item").innerText = `Ítem reconocido: ${item}`;
+            const price = getItemPrice(item);
+            document.getElementById("item-price").innerText = `Precio por libra: $${price}`;
         });
     </script>
 </body>

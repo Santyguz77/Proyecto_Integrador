@@ -31,6 +31,16 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #444cf7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +48,8 @@
         <div class="content">
             <h1>Peso del Ítem</h1>
             <p id="recognized-item"></p>
-            <p id="item-price"></p> <!-- Nuevo elemento para mostrar el precio -->
+            <p id="item-price"></p> 
+            <a href="index.html" class="back-button">Volver a escanear</a> 
         </div>
     </div>
     <script type="text/javascript">
@@ -50,7 +61,9 @@
         function getItemPrice(item) {
             const prices = {
                 "limon": 1500,
-                // Puedes agregar más ítems y sus precios aquí
+                "Manzana": 2000,
+                "papa": 500,
+                "tomate": 1200,
             };
             return prices[item.toLowerCase()] || "Precio no disponible";
         }

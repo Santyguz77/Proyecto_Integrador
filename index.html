@@ -44,7 +44,7 @@
           maxPredictions = model.getTotalClasses();
   
           const flip = true; 
-          webcam = new tmImage.Webcam(400, 400, flip); // Aumentar el tamaño a 400x400
+          webcam = new tmImage.Webcam(400, 400, flip); 
           await webcam.setup(); 
           await webcam.play();
           window.requestAnimationFrame(loop);
@@ -67,7 +67,7 @@
       async function predict() {
           const prediction = await model.predict(webcam.canvas);
           for (let i = 0; i < maxPredictions; i++) {
-              const classPrediction = ""; // No mostrar nada
+              const classPrediction = ""; 
               labelContainer.childNodes[i].innerHTML = classPrediction;
               if (prediction[i].probability > 0.9) {
                   recognizedItem = prediction[i].className;
@@ -91,7 +91,7 @@
       }
   </script>
   <style>
-  /* From Uiverse.io by ilkhoeri */ 
+  
   .button {
     --h-button: 48px;
     --w-button: 102px;
@@ -312,7 +312,7 @@
     }
   }
   
-  /* From Uiverse.io by uiverse-astronaut */ 
+   
   html, body {
     margin: 0;
     padding: 0;
@@ -339,8 +339,8 @@
   }
   
   .webcam-section {
-    width: 400px; /* Aumentar el tamaño a 400px */
-    height: 400px; /* Aumentar el tamaño a 400px */
+    width: 400px; 
+    height: 400px; 
     display: inline-block;
     margin: 10px;
   }

@@ -98,7 +98,7 @@
                 const weight = parseFloat(document.getElementById("item-weight").value);
                 if (!isNaN(weight) && weight > 0) {
                     const totalPrice = weight * price;
-                    document.getElementById("total-price").innerText = `Precio total: $${totalPrice.toFixed(2)}`;
+                    document.getElementById("total-price").innerText = `Precio total: $${totalPrice.toFixed(0)}`;
                 } else {
                     document.getElementById("total-price").innerText = "Por favor, introduzca un peso válido.";
                 }

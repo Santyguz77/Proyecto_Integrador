@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peso del Ítem</title>
+    <title>Precio del Ítem</title>
     <style>
         html, body {
             margin: 0;
@@ -41,6 +41,22 @@
             cursor: pointer;
             text-decoration: none;
         }
+        .weight-input {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100px;
+        }
+        .calculate-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #444cf7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +65,9 @@
             <h1>Peso del Ítem</h1>
             <p id="recognized-item"></p>
             <p id="item-price"></p> 
+            <input type="number" id="item-weight" class="weight-input" placeholder="Peso en libras">
+            <button id="calculate-button" class="calculate-button">Calcular Precio</button>
+            <p id="total-price"></p>
             <a href="index.html" class="back-button">Volver a escanear</a> 
         </div>
     </div>
@@ -74,6 +93,16 @@
             document.getElementById("recognized-item").innerText = `Ítem reconocido: ${item}`;
             const price = getItemPrice(item);
             document.getElementById("item-price").innerText = `Precio por libra: $${price}`;
+
+            document.getElementById("calculate-button").addEventListener("click", () => {
+                const weight = parseFloat(document.getElementById("item-weight").value);
+                if (!isNaN(weight) && weight > 0) {
+                    const totalPrice = weight * price;
+                    document.getElementById("total-price").innerText = `Precio total: $${totalPrice.toFixed(2)}`;
+                } else {
+                    document.getElementById("total-price").innerText = "Por favor, introduzca un peso válido.";
+                }
+            });
         });
     </script>
 </body>

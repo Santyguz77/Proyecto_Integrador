@@ -52,14 +52,15 @@
           const stream = await navigator.mediaDevices.getUserMedia(constraints);
           const videoElement = document.createElement("video");
           videoElement.srcObject = stream;
-          videoElement.play();
+          videoElement.setAttribute("playsinline", "true"); // Asegura que funcione en móviles
+          await videoElement.play();
   
           webcam = new tmImage.Webcam(400, 400, false); // Desactiva el flip manualmente
           await webcam.setup({ video: videoElement });
           await webcam.play();
           window.requestAnimationFrame(loop);
   
-          document.getElementById("webcam-container").appendChild(webcam.canvas);
+          document.getElementById("webcam-container").appendChild(webcam.canvas); // Asegura que el canvas se muestre
           labelContainer = document.getElementById("label-container");
           for (let i = 0; i < maxPredictions; i++) { 
               labelContainer.appendChild(document.createElement("div"));

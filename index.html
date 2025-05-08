@@ -43,17 +43,19 @@
           model = await tmImage.load(modelURL, metadataURL);
           maxPredictions = model.getTotalClasses();
   
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          const videoDevices = devices.filter(device => device.kind === "videoinput");
-          const backCamera = videoDevices.find(device => device.label.toLowerCase().includes("back"));
+          const constraints = {
+              video: {
+                  facingMode: { ideal: "environment" } // Intenta usar la cámara trasera
+              }
+          };
   
-          const flip = true;
-          const constraints = backCamera
-              ? { deviceId: backCamera.deviceId }
-              : { facingMode: "environment" };
+          const stream = await navigator.mediaDevices.getUserMedia(constraints);
+          const videoElement = document.createElement("video");
+          videoElement.srcObject = stream;
+          videoElement.play();
   
-          webcam = new tmImage.Webcam(400, 400, flip, constraints);
-          await webcam.setup();
+          webcam = new tmImage.Webcam(400, 400, false); // Desactiva el flip manualmente
+          await webcam.setup({ video: videoElement });
           await webcam.play();
           window.requestAnimationFrame(loop);
   

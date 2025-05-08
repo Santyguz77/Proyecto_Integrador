@@ -43,9 +43,17 @@
           model = await tmImage.load(modelURL, metadataURL);
           maxPredictions = model.getTotalClasses();
   
-          const flip = true; 
-          webcam = new tmImage.Webcam(400, 400, flip, { facingMode: "environment" }); 
-          await webcam.setup(); 
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevices = devices.filter(device => device.kind === "videoinput");
+          const backCamera = videoDevices.find(device => device.label.toLowerCase().includes("back"));
+  
+          const flip = true;
+          const constraints = backCamera
+              ? { deviceId: backCamera.deviceId }
+              : { facingMode: "environment" };
+  
+          webcam = new tmImage.Webcam(400, 400, flip, constraints);
+          await webcam.setup();
           await webcam.play();
           window.requestAnimationFrame(loop);
   

@@ -30,15 +30,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script type="text/javascript">
-  
-      const URL1 = "https://teachablemachine.withgoogle.com/models/cJfrqDB0z/"; // Modelo 1
-      const URL2 = "https://teachablemachine.withgoogle.com/models/Oa7Wbaw4U/"; // Modelo 2
+      const URL1 = "https://teachablemachine.withgoogle.com/models/cJfrqDB0z/";
+      const URL2 = "https://teachablemachine.withgoogle.com/models/Oa7Wbaw4U/";
 
       let model1, model2, webcam, labelContainer1, labelContainer2, maxPredictions1, maxPredictions2;
       let recognizedItem1 = "", recognizedItem2 = "";
-      let invoiceItems = []; // Variable para almacenar los elementos reconocidos
+      let invoiceItems = [];
   
-      
       async function init() {
           const modelURL1 = URL1 + "model.json";
           const metadataURL1 = URL1 + "metadata.json";
@@ -51,21 +49,20 @@
           maxPredictions1 = model1.getTotalClasses();
           maxPredictions2 = model2.getTotalClasses();
 
-          const useFrontCamera = await askCameraPreference(); // Preguntar al usuario qué cámara usar
-          const facingMode = useFrontCamera ? "user" : "environment"; // Configurar la cámara según la elección
-          webcam = new tmImage.Webcam(400, 400, false); // Desactivar el flip automático
-          await webcam.setup({ facingMode }); // Configurar la cámara con el modo seleccionado
+          const useFrontCamera = await askCameraPreference();
+          const facingMode = useFrontCamera ? "user" : "environment";
+          webcam = new tmImage.Webcam(400, 400, false);
+          await webcam.setup({ facingMode });
           await webcam.play();
           window.requestAnimationFrame(loop);
-  
-          // Crear un canvas adicional para dividir la imagen
+
           const webcamContainer = document.getElementById("webcam-container");
           const splitCanvas = document.createElement("canvas");
-          splitCanvas.width = 600; // Aumentar el ancho total del canvas
-          splitCanvas.height = 400; // Mantener la altura
+          splitCanvas.width = 600;
+          splitCanvas.height = 400;
           splitCanvas.id = "split-canvas";
           webcamContainer.appendChild(splitCanvas);
-  
+
           labelContainer1 = document.getElementById("label-container1");
           labelContainer2 = document.getElementById("label-container2");
 
@@ -75,7 +72,6 @@
           for (let i = 0; i < maxPredictions2; i++) { 
               labelContainer2.appendChild(document.createElement("div"));
           }
-  
       }
 
       async function askCameraPreference() {
@@ -104,20 +100,15 @@
           await predictModel2(webcam.canvas);
   
           if (recognizedItem1 && recognizedItem2) {
-              // Guardar los elementos reconocidos en la variable de factura
               invoiceItems.push({ objeto1: recognizedItem1, peso: "peso", objeto2: recognizedItem2 });
 
-              // Mostrar mensaje de confirmación
               showAnimation("Elementos añadidos a la factura");
 
-              // Mostrar pregunta con opciones
               showOptions();
 
-              // Limpiar las variables para evitar duplicados
               recognizedItem1 = "";
               recognizedItem2 = "";
 
-              // Opcional: Mostrar en consola para depuración
               console.log("Factura actual:", invoiceItems);
           }
   
@@ -125,31 +116,29 @@
           const ctx = splitCanvas.getContext("2d");
           ctx.clearRect(0, 0, splitCanvas.width, splitCanvas.height);
   
-          // Dibujar la cámara izquierda más grande y cuadrada con borde
           ctx.drawImage(webcam.canvas, 0, 0, webcam.canvas.width, webcam.canvas.height, 0, 0, splitCanvas.width * 2 / 3, splitCanvas.height);
-          ctx.strokeStyle = "blue"; // Color del borde
-          ctx.lineWidth = 5; // Grosor del borde
+          ctx.strokeStyle = "blue";
+          ctx.lineWidth = 5;
           ctx.strokeRect(0, 0, splitCanvas.width * 2 / 3, splitCanvas.height);
   
-          // Dibujar la región específica en la mitad derecha con borde
-          const pointX = 300; // Coordenada X inicial del área (extremo derecho)
-          const pointY = 50;  // Coordenada Y inicial del área (cerca del borde superior)
-          const pointWidth = 100; // Ancho del área encerrada
-          const pointHeight = 200; // Altura del área encerrada
+          const pointX = 300;
+          const pointY = 50;
+          const pointWidth = 100;
+          const pointHeight = 200;
   
           ctx.drawImage(
               webcam.canvas,
-              pointX, // Coordenada X inicial del recorte
-              pointY, // Coordenada Y inicial del recorte
-              pointWidth, // Ancho del recorte
-              pointHeight, // Altura del recorte
-              splitCanvas.width * 2 / 3, // Coordenada X donde se dibuja en el canvas
-              0, // Coordenada Y donde se dibuja en el canvas
-              splitCanvas.width / 3, // Escalar al ancho de la parte derecha
-              splitCanvas.height // Escalar a la altura completa del canvas
+              pointX,
+              pointY,
+              pointWidth,
+              pointHeight,
+              splitCanvas.width * 2 / 3,
+              0,
+              splitCanvas.width / 3,
+              splitCanvas.height
           );
-          ctx.strokeStyle = "red"; // Color del borde
-          ctx.lineWidth = 5; // Grosor del borde
+          ctx.strokeStyle = "red";
+          ctx.lineWidth = 5;
           ctx.strokeRect(splitCanvas.width * 2 / 3, 0, splitCanvas.width / 3, splitCanvas.height);
   
           if (!document.querySelector(".options-container")) {
@@ -177,7 +166,7 @@
 
           const prediction = await model2.predict(tempCanvas);
           for (let i = 0; i < maxPredictions2; i++) {
-              if (prediction[i].probability >= 0.98) { // Requisito de 98% de probabilidad
+              if (prediction[i].probability >= 0.98) {
                   recognizedItem2 = prediction[i].className;
                   break;
               }
@@ -210,19 +199,16 @@
       function continueAdding() {
           const optionsContainer = document.querySelector(".options-container");
           if (optionsContainer) optionsContainer.remove();
-          // Continuar con el reconocimiento
           window.requestAnimationFrame(loop);
       }
 
       function viewInvoice() {
           const optionsContainer = document.querySelector(".options-container");
           if (optionsContainer) optionsContainer.remove();
-          // Redirigir a la página de factura con los elementos actuales
           window.location.href = `peso.html?invoice=${encodeURIComponent(JSON.stringify(invoiceItems))}`;
       }
   </script>
   <style>
-  
   .button {
     --h-button: 48px;
     --w-button: 102px;
@@ -443,7 +429,6 @@
     }
   }
   
-   
   html, body {
     margin: 0;
     padding: 0;

@@ -51,9 +51,10 @@
           maxPredictions1 = model1.getTotalClasses();
           maxPredictions2 = model2.getTotalClasses();
 
-          const flip = await askCameraPreference(); // Preguntar al usuario qué cámara usar
-          webcam = new tmImage.Webcam(400, 400, flip); 
-          await webcam.setup(); 
+          const useFrontCamera = await askCameraPreference(); // Preguntar al usuario qué cámara usar
+          const facingMode = useFrontCamera ? "user" : "environment"; // Configurar la cámara según la elección
+          webcam = new tmImage.Webcam(400, 400, false); // Desactivar el flip automático
+          await webcam.setup({ facingMode }); // Configurar la cámara con el modo seleccionado
           await webcam.play();
           window.requestAnimationFrame(loop);
   

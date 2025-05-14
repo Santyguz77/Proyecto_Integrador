@@ -51,7 +51,7 @@
           maxPredictions1 = model1.getTotalClasses();
           maxPredictions2 = model2.getTotalClasses();
 
-          const flip = true; 
+          const flip = await askCameraPreference(); // Preguntar al usuario qué cámara usar
           webcam = new tmImage.Webcam(400, 400, flip); 
           await webcam.setup(); 
           await webcam.play();
@@ -75,6 +75,26 @@
               labelContainer2.appendChild(document.createElement("div"));
           }
   
+      }
+
+      async function askCameraPreference() {
+          return new Promise((resolve) => {
+              const optionsContainer = document.createElement("div");
+              optionsContainer.className = "options-container";
+              optionsContainer.innerHTML = `
+                  <div class="options-content">
+                      <p>¿Qué cámara deseas usar?</p>
+                      <button class="option-button" onclick="resolveCameraChoice(true)">Frontal</button>
+                      <button class="option-button" onclick="resolveCameraChoice(false)">Trasera</button>
+                  </div>
+              `;
+              document.body.appendChild(optionsContainer);
+
+              window.resolveCameraChoice = (flip) => {
+                  document.body.removeChild(optionsContainer);
+                  resolve(flip);
+              };
+          });
       }
   
       async function loop() {

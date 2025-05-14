@@ -23,58 +23,141 @@
         </span>
       </button>
       <div id="webcam-container"></div>
-      <div id="label-container"></div>
+      <div id="label-container1"></div>
+      <div id="label-container2"></div>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script type="text/javascript">
   
-      const URL = "https://teachablemachine.withgoogle.com/models/cJfrqDB0z/"; //https://teachablemachine.withgoogle.com/models/sB6WIaOPi/ https://teachablemachine.withgoogle.com/models/B-eovzLvd/ 
-  
-      let model, webcam, labelContainer, maxPredictions;
-      let recognizedItem = "";
+      const URL1 = "https://teachablemachine.withgoogle.com/models/cJfrqDB0z/"; // Modelo 1
+      const URL2 = "https://teachablemachine.withgoogle.com/models/Oa7Wbaw4U/"; // Modelo 2
+
+      let model1, model2, webcam, labelContainer1, labelContainer2, maxPredictions1, maxPredictions2;
+      let recognizedItem1 = "", recognizedItem2 = "";
+      let invoiceItems = []; // Variable para almacenar los elementos reconocidos
   
       
       async function init() {
-          const modelURL = URL + "model.json";
-          const metadataURL = URL + "metadata.json";
-  
-          model = await tmImage.load(modelURL, metadataURL);
-          maxPredictions = model.getTotalClasses();
-  
+          const modelURL1 = URL1 + "model.json";
+          const metadataURL1 = URL1 + "metadata.json";
+          const modelURL2 = URL2 + "model.json";
+          const metadataURL2 = URL2 + "metadata.json";
+
+          model1 = await tmImage.load(modelURL1, metadataURL1);
+          model2 = await tmImage.load(modelURL2, metadataURL2);
+
+          maxPredictions1 = model1.getTotalClasses();
+          maxPredictions2 = model2.getTotalClasses();
+
           const flip = true; 
           webcam = new tmImage.Webcam(400, 400, flip); 
           await webcam.setup(); 
           await webcam.play();
           window.requestAnimationFrame(loop);
   
-          document.getElementById("webcam-container").appendChild(webcam.canvas);
-          labelContainer = document.getElementById("label-container");
-          for (let i = 0; i < maxPredictions; i++) { 
-              labelContainer.appendChild(document.createElement("div"));
+          // Crear un canvas adicional para dividir la imagen
+          const webcamContainer = document.getElementById("webcam-container");
+          const splitCanvas = document.createElement("canvas");
+          splitCanvas.width = 600; // Aumentar el ancho total del canvas
+          splitCanvas.height = 400; // Mantener la altura
+          splitCanvas.id = "split-canvas";
+          webcamContainer.appendChild(splitCanvas);
+  
+          labelContainer1 = document.getElementById("label-container1");
+          labelContainer2 = document.getElementById("label-container2");
+
+          for (let i = 0; i < maxPredictions1; i++) { 
+              labelContainer1.appendChild(document.createElement("div"));
+          }
+          for (let i = 0; i < maxPredictions2; i++) { 
+              labelContainer2.appendChild(document.createElement("div"));
           }
   
       }
   
       async function loop() {
           webcam.update();
-          await predict();
-          window.requestAnimationFrame(loop);
+          await predictModel1(webcam.canvas);
+          await predictModel2(webcam.canvas);
+  
+          if (recognizedItem1 && recognizedItem2) {
+              // Guardar los elementos reconocidos en la variable de factura
+              invoiceItems.push({ objeto1: recognizedItem1, peso: "peso", objeto2: recognizedItem2 });
+
+              // Mostrar mensaje de confirmación
+              showAnimation("Elementos añadidos a la factura");
+
+              // Mostrar pregunta con opciones
+              showOptions();
+
+              // Limpiar las variables para evitar duplicados
+              recognizedItem1 = "";
+              recognizedItem2 = "";
+
+              // Opcional: Mostrar en consola para depuración
+              console.log("Factura actual:", invoiceItems);
+          }
+  
+          const splitCanvas = document.getElementById("split-canvas");
+          const ctx = splitCanvas.getContext("2d");
+          ctx.clearRect(0, 0, splitCanvas.width, splitCanvas.height);
+  
+          // Dibujar la cámara izquierda más grande y cuadrada con borde
+          ctx.drawImage(webcam.canvas, 0, 0, webcam.canvas.width, webcam.canvas.height, 0, 0, splitCanvas.width * 2 / 3, splitCanvas.height);
+          ctx.strokeStyle = "blue"; // Color del borde
+          ctx.lineWidth = 5; // Grosor del borde
+          ctx.strokeRect(0, 0, splitCanvas.width * 2 / 3, splitCanvas.height);
+  
+          // Dibujar la región específica en la mitad derecha con borde
+          const pointX = 300; // Coordenada X inicial del área (extremo derecho)
+          const pointY = 50;  // Coordenada Y inicial del área (cerca del borde superior)
+          const pointWidth = 100; // Ancho del área encerrada
+          const pointHeight = 200; // Altura del área encerrada
+  
+          ctx.drawImage(
+              webcam.canvas,
+              pointX, // Coordenada X inicial del recorte
+              pointY, // Coordenada Y inicial del recorte
+              pointWidth, // Ancho del recorte
+              pointHeight, // Altura del recorte
+              splitCanvas.width * 2 / 3, // Coordenada X donde se dibuja en el canvas
+              0, // Coordenada Y donde se dibuja en el canvas
+              splitCanvas.width / 3, // Escalar al ancho de la parte derecha
+              splitCanvas.height // Escalar a la altura completa del canvas
+          );
+          ctx.strokeStyle = "red"; // Color del borde
+          ctx.lineWidth = 5; // Grosor del borde
+          ctx.strokeRect(splitCanvas.width * 2 / 3, 0, splitCanvas.width / 3, splitCanvas.height);
+  
+          if (!document.querySelector(".options-container")) {
+              window.requestAnimationFrame(loop);
+          }
       }
   
-      
-      async function predict() {
-          const prediction = await model.predict(webcam.canvas);
-          for (let i = 0; i < maxPredictions; i++) {
-              const classPrediction = ""; 
-              labelContainer.childNodes[i].innerHTML = classPrediction;
+      async function predictModel1(sourceCanvas) {
+          const prediction = await model1.predict(sourceCanvas);
+          for (let i = 0; i < maxPredictions1; i++) {
               if (prediction[i].probability > 0.9) {
-                  recognizedItem = prediction[i].className;
-                  showAnimation(recognizedItem);
-                  setTimeout(() => {
-                      window.location.href = `peso.html?item=${encodeURIComponent(recognizedItem)}`;
-                  }, 5000);
+                  recognizedItem1 = prediction[i].className;
+                  break;
+              }
+          }
+      }
+
+      async function predictModel2(sourceCanvas) {
+          const tempCanvas = document.createElement("canvas");
+          const ctx = tempCanvas.getContext("2d");
+          const x = 300, y = 50, w = 100, h = 200;
+          tempCanvas.width = w;
+          tempCanvas.height = h;
+          ctx.drawImage(sourceCanvas, x, y, w, h, 0, 0, w, h);
+
+          const prediction = await model2.predict(tempCanvas);
+          for (let i = 0; i < maxPredictions2; i++) {
+              if (prediction[i].probability >= 0.98) { // Requisito de 98% de probabilidad
+                  recognizedItem2 = prediction[i].className;
                   break;
               }
           }
@@ -88,6 +171,33 @@
           setTimeout(() => {
               animationContainer.remove();
           }, 5000);
+      }
+
+      function showOptions() {
+          const optionsContainer = document.createElement("div");
+          optionsContainer.className = "options-container";
+          optionsContainer.innerHTML = `
+              <div class="options-content">
+                  <p>¿Qué deseas hacer?</p>
+                  <button class="option-button" onclick="continueAdding()">Añadir otro producto</button>
+                  <button class="option-button" onclick="viewInvoice()">Ver factura</button>
+              </div>
+          `;
+          document.body.appendChild(optionsContainer);
+      }
+
+      function continueAdding() {
+          const optionsContainer = document.querySelector(".options-container");
+          if (optionsContainer) optionsContainer.remove();
+          // Continuar con el reconocimiento
+          window.requestAnimationFrame(loop);
+      }
+
+      function viewInvoice() {
+          const optionsContainer = document.querySelector(".options-container");
+          if (optionsContainer) optionsContainer.remove();
+          // Redirigir a la página de factura con los elementos actuales
+          window.location.href = `peso.html?invoice=${encodeURIComponent(JSON.stringify(invoiceItems))}`;
       }
   </script>
   <style>
@@ -361,5 +471,39 @@
   @keyframes fadeInOut {
     0%, 100% { opacity: 0; }
     10%, 90% { opacity: 1; }
+  }
+
+  .options-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
+  }
+
+  .options-content p {
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+
+  .option-button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #444cf7;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+
+  .option-button:hover {
+    background-color: #3333cc;
   }
   </style>

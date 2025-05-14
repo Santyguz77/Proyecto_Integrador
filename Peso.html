@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Precio del Ítem</title>
+    <title>Peso del Ítem</title>
     <style>
         html, body {
             margin: 0;
@@ -24,88 +24,243 @@
             background-size: 100px 100px;
             background-position: 0 0, 50px 50px;
         }
-        .content {
-            text-align: center;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        /* From Uiverse.io by seoulchik */
+        .card {
+            position: relative;
+            width: 20em;
+            background: #ffffff;
+            border: 0.35em solid #050505;
+            border-radius: 0.6em;
+            box-shadow: 0.7em 0.7em 0 #000000, inset 0 0 0 0.15em rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            transform-origin: center;
         }
-        .back-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #444cf7;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
+        .card:hover {
+            transform: translate(-0.4em, -0.4em) scale(1.02);
+            box-shadow: 1em 1em 0 #000000;
+        }
+        .card-title-area {
+            position: relative;
+            padding: 1.4em;
+            background: #ff3e00;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 0.35em solid #050505;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .card-tag {
+            background: #ffffff;
+            color: #050505;
+            font-size: 0.6em;
+            font-weight: 800;
+            padding: 0.4em 0.8em;
+            border: 0.15em solid #050505;
+            border-radius: 0.3em;
+            box-shadow: 0.2em 0.2em 0 #000000;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(3deg);
+            transition: all 0.3s ease;
+        }
+        .card:hover .card-tag {
+            transform: rotate(-2deg) scale(1.1);
+            box-shadow: 0.25em 0.25em 0 #000000;
+        }
+        .card-body {
+            position: relative;
+            padding: 1.5em;
+            z-index: 2;
+        }
+        .card-description {
+            margin-bottom: 1.5em;
+            color: #050505;
+            font-size: 0.95em;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1em;
+            margin-bottom: 1.5em;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6em;
+            transition: transform 0.2s ease;
+        }
+        .feature-item:hover {
+            transform: translateX(0.3em);
+        }
+        .feature-icon {
+            width: 1.4em;
+            height: 1.4em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #4d61ff;
+            border: 0.12em solid #050505;
+            border-radius: 0.3em;
+            box-shadow: 0.2em 0.2em 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        .feature-item:hover .feature-icon {
+            background: #5e70ff;
+            transform: rotate(-5deg);
+        }
+        .feature-icon svg {
+            width: 0.9em;
+            height: 0.9em;
+            fill: #ffffff;
+        }
+        .feature-text {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #050505;
+        }
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5em;
+            padding-top: 1.2em;
+            border-top: 0.15em dashed rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        .price {
+            position: relative;
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #050505;
+            background: #ffffff;
+        }
+        .price-currency {
+            font-size: 0.6em;
+            font-weight: 700;
+            vertical-align: top;
+            margin-right: 0.1em;
+        }
+        .price-period {
+            display: block;
+            font-size: 0.4em;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.6);
+            margin-top: 0.2em;
+        }
+        .card-button {
+            position: relative;
+            background: #4d61ff;
+            color: #ffffff;
+            font-size: 0.9em;
+            font-weight: 700;
+            padding: 0.7em 1.2em;
+            border: 0.2em solid #050505;
+            border-radius: 0.4em;
+            box-shadow: 0.3em 0.3em 0 #000000;
             cursor: pointer;
-            text-decoration: none;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        .weight-input {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100px;
-        }
-        .calculate-button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #444cf7;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .card-button:hover {
+            background: #5e70ff;
+            transform: translate(-0.1em, -0.1em);
+            box-shadow: 0.4em 0.4em 0 #000000;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="content">
-            <h1>Peso del Ítem</h1>
-            <p id="recognized-item"></p>
-            <p id="item-price"></p> 
-            <input type="number" id="item-weight" class="weight-input" placeholder="Peso en libras">
-            <button id="calculate-button" class="calculate-button">Calcular Precio</button>
-            <p id="total-price"></p>
-            <a href="index.html" class="back-button">Volver a escanear</a> 
+        <div class="card">
+            <div class="card-title-area">
+                <span>Factura de frutas</span>
+                <span class="card-tag">Resumen</span>
+            </div>
+            <div class="card-body">
+                <div class="card-description">
+                    Estos son los productos reconocidos y sus precios.
+                </div>
+                <div class="feature-grid" id="invoice-items">
+                    <!-- Los elementos de la factura se insertarán aquí dinámicamente -->
+                </div>
+                <div class="total-price" id="total-price">
+                    <!-- El precio total se mostrará aquí -->
+                </div>
+                <div class="card-actions">
+                    <button class="card-button" onclick="window.location.href='index.html'">Volver</button>
+                </div>
+            </div>
         </div>
     </div>
-    <script type="text/javascript">
+    <script>
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        function getItemPrice(item) {
-            const prices = {
-                "limon": 1500,
-                "manzana": 2000, 
-                "papa": 500, 
-                "tomate": 1200,
-                "platano": 2200,
-                "manzana":2000,
-                "Naranja":1800,
-                "paipaman":0
-            };
-            return prices[item.toLowerCase()] || "Precio no disponible";
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
-            const item = getQueryParam("item");
-            document.getElementById("recognized-item").innerText = `Ítem reconocido: ${item}`;
-            const price = getItemPrice(item);
-            document.getElementById("item-price").innerText = `Precio por libra: $${price}`;
+            const invoiceData = getQueryParam("invoice");
+            const invoiceItems = JSON.parse(decodeURIComponent(invoiceData || "[]"));
+            const invoiceContainer = document.getElementById("invoice-items");
+            const totalPriceContainer = document.getElementById("total-price");
 
-            document.getElementById("calculate-button").addEventListener("click", () => {
-                const weight = parseFloat(document.getElementById("item-weight").value);
-                if (!isNaN(weight) && weight > 0) {
-                    const totalPrice = weight * price;
-                    document.getElementById("total-price").innerText = `Precio total: $${totalPrice.toFixed(0)}`;
-                } else {
-                    document.getElementById("total-price").innerText = "Por favor, introduzca un peso válido.";
-                }
-            });
+            // Precios asignados a cada categoría del primer modelo
+            const categoryPrices1 = {
+                "Manzana": 1500,
+                "Banana": 1200,
+                "Naranja": 1000,
+                "Paipaman": 1000
+            };
+
+            // Precios asignados a cada categoría del segundo modelo
+            const categoryPrices2 = {
+                "1.7": 1.7,
+                "4.0": 4,
+                "5.3": 5.3,
+                "2.5": 2.5
+            };
+
+            let totalPrice = 0;
+
+            if (invoiceItems.length > 0) {
+                invoiceItems.forEach((item, index) => {
+                    const price1 = categoryPrices1[item.objeto1] || 0; // Precio del primer modelo
+                    const price2 = categoryPrices2[item.objeto2] || 0; // Precio del segundo modelo
+                    const totalItemPrice = Math.round(price1 * price2); // Multiplicación de los valores de ambos modelos
+                    totalPrice += totalItemPrice;
+
+                    const itemElement = document.createElement("div");
+                    itemElement.className = "feature-item";
+                    itemElement.innerHTML = `
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M20,4C21.1,4 22,4.9 22,6V18C22,19.1 21.1,20 20,20H4C2.9,20 2,19.1 2,18V6C2,4.9 2.9,4 4,4H20M4,6V18H20V6H4M6,9H18V11H6V9M6,13H16V15H6V13Z"
+                                ></path>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Producto ${index + 1}: ${item.objeto1} en ${item.objeto2} - $${totalItemPrice}</span>
+                    `;
+                    invoiceContainer.appendChild(itemElement);
+                });
+
+                totalPriceContainer.innerHTML = `<p><strong>Precio Total:</strong> $${Math.round(totalPrice)}</p>`;
+            } else {
+                invoiceContainer.innerHTML = "<p>No hay productos en la factura.</p>";
+                totalPriceContainer.innerHTML = "";
+            }
         });
     </script>
 </body>

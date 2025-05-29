@@ -180,8 +180,142 @@
             box-shadow: 0.4em 0.4em 0 #000000;
         }
     </style>
+    <style>
+        /* Botón de menú en la esquina superior derecha */
+        .menu-btn {
+            position: fixed;
+            top: 1.5em;
+            right: 2em;
+            z-index: 100;
+            background: #4d61ff;
+            color: #fff;
+            border: 0.15em solid #050505;
+            border-radius: 50%;
+            width: 2.5em;
+            height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0.2em 0.2em 0 #000000;
+            font-size: 1.3em;
+            transition: background 0.2s;
+        }
+        .menu-btn:hover {
+            background: #5e70ff;
+        }
+        .settings-menu {
+            display: none;
+            position: fixed;
+            top: 4.5em;
+            right: 2em;
+            background: #fff;
+            border: 0.15em solid #050505;
+            border-radius: 0.5em;
+            box-shadow: 0.3em 0.3em 0 #000000;
+            padding: 1em 1.5em;
+            z-index: 101;
+            min-width: 180px;
+        }
+        .settings-menu.active {
+            display: block;
+        }
+        .settings-menu h4 {
+            margin: 0 0 0.5em 0;
+            font-size: 1em;
+            font-weight: 700;
+        }
+        .settings-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .settings-menu li {
+            margin-bottom: 0.7em;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+        .settings-menu li:last-child {
+            margin-bottom: 0;
+        }
+        /* Opcional: cerrar menú al hacer clic fuera */
+    </style>
 </head>
 <body>
+    <!-- Botón de menú -->
+    <div class="menu-btn" id="menuBtn" title="Configuraciones">
+        ⚙️
+    </div>
+    <!-- Menú de configuraciones -->
+    <div class="settings-menu" id="settingsMenu">
+        <h4>Configuraciones</h4>
+        <ul>
+            <li id="changePricesBtn">Cambiar los precios de la fruta</li>
+        </ul>
+    </div>
+    <!-- Ventana emergente para contraseña -->
+    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:201; align-items:center; justify-content:center;">
+        <div class="card" style="width:auto; min-width:0; max-width:90vw; padding:0; position:relative;">
+            <div class="card-title-area" style="background:#4d61ff;">
+                <span>Contraseña requerida</span>
+            </div>
+            <div class="card-body" style="padding-bottom:0.5em;">
+                <form id="passwordForm">
+                    <div class="feature-item">
+                        <span class="feature-text" style="min-width:90px;">Contraseña</span>
+                        <input type="password" id="passwordInput" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                    </div>
+                    <div id="passwordError" style="color:#ff3e00; font-size:0.9em; margin-top:0.7em; display:none;">Contraseña incorrecta</div>
+                    <div class="card-actions" style="margin-top:1em; border-top:none; padding-top:0;">
+                        <button type="button" class="card-button" id="cancelPassword" style="background:#ff3e00;">Cancelar</button>
+                        <button type="submit" class="card-button">Entrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Ventana emergente para cambiar precios -->
+    <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:200; align-items:center; justify-content:center;">
+        <div class="card" style="width:auto; min-width:0; max-width:95vw; padding:0; position:relative; box-shadow: 0.7em 0.7em 0 #000000;">
+            <div class="card-title-area" style="background:#4d61ff;">
+                <span>Cambiar precios de la fruta</span>
+            </div>
+            <div class="card-body" style="padding-bottom:0.5em;">
+                <form id="preciosForm">
+                    <div class="feature-grid" style="margin-bottom:0;">
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Manzana</span>
+                            <input type="number" min="0" id="precioManzana" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Banana</span>
+                            <input type="number" min="0" id="precioBanana" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Papa</span>
+                            <input type="number" min="0" id="precioPapa" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Naranja</span>
+                            <input type="number" min="0" id="precioNaranja" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Limon</span>
+                            <input type="number" min="0" id="precioLimon" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-text" style="min-width:70px;">Ciruela</span>
+                            <input type="number" min="0" id="precioCiruela" required style="flex:1; border-radius:0.3em; border:1px solid #ccc; padding:0.3em;">
+                        </div>
+                    </div>
+                    <div class="card-actions" style="margin-top:1em; border-top:none; padding-top:0;">
+                        <button type="button" class="card-button" id="cerrarModal" style="background:#ff3e00;">Cancelar</button>
+                        <button type="submit" class="card-button">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="card">
             <div class="card-title-area">
@@ -205,23 +339,90 @@
         </div>
     </div>
     <script>
+        // Menú de configuraciones toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const settingsMenu = document.getElementById('settingsMenu');
+        menuBtn.addEventListener('click', (e) => {
+            settingsMenu.classList.toggle('active');
+            e.stopPropagation();
+        });
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (settingsMenu.classList.contains('active') && !settingsMenu.contains(e.target) && e.target !== menuBtn) {
+                settingsMenu.classList.remove('active');
+            }
+        });
+
+        // Contraseña para acceder al menú de precios
+        const PASSWORDS = ["qwerty", "millos"]; // Puedes agregar más claves aquí
+
+        // Mostrar modal de contraseña antes de mostrar el modal de precios
+        document.getElementById('changePricesBtn').onclick = function() {
+            document.getElementById('passwordInput').value = "";
+            document.getElementById('passwordError').style.display = "none";
+            document.getElementById('passwordModal').style.display = 'flex';
+        };
+
+        // Cancelar contraseña
+        document.getElementById('cancelPassword').onclick = function() {
+            document.getElementById('passwordModal').style.display = 'none';
+        };
+
+        // Validar contraseña
+        document.getElementById('passwordForm').onsubmit = function(e) {
+            e.preventDefault();
+            const input = document.getElementById('passwordInput').value;
+            if (PASSWORDS.includes(input)) {
+                document.getElementById('passwordModal').style.display = 'none';
+                // Mostrar modal de precios
+                const precios = JSON.parse(localStorage.getItem('preciosFruta') || '{}');
+                document.getElementById('precioManzana').value = precios.Manzana || 1500;
+                document.getElementById('precioPapa').value = precios.Papa || 1500;
+                document.getElementById('precioBanana').value = precios.Banana || 1200;
+                document.getElementById('precioNaranja').value = precios.Naranja || 1000;
+                document.getElementById('precioLimon').value = precios.Limon || 1100;
+                document.getElementById('precioCiruela').value = precios.Ciruela || 1300;
+                document.getElementById('modalOverlay').style.display = 'flex';
+            } else {
+                document.getElementById('passwordError').style.display = "block";
+            }
+        };
+
+        // Cerrar ventana emergente
+        document.getElementById('cerrarModal').onclick = function() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        };
+        // Guardar nuevos precios
+        document.getElementById('preciosForm').onsubmit = function(e) {
+            e.preventDefault();
+            const precios = {
+                Manzana: parseInt(document.getElementById('precioManzana').value, 10),
+                Papa: parseInt(document.getElementById('precioPapa').value, 10),
+                Banana: parseInt(document.getElementById('precioBanana').value, 10),
+                Naranja: parseInt(document.getElementById('precioNaranja').value, 10),
+                Limon: parseInt(document.getElementById('precioLimon').value, 10),
+                Ciruela: parseInt(document.getElementById('precioCiruela').value, 10)
+            };
+            localStorage.setItem('preciosFruta', JSON.stringify(precios));
+            document.getElementById('modalOverlay').style.display = 'none';
+            location.reload(); // Refresca para aplicar los nuevos precios
+        };
+
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const invoiceData = getQueryParam("invoice");
-            const invoiceItems = JSON.parse(decodeURIComponent(invoiceData || "[]"));
-            const invoiceContainer = document.getElementById("invoice-items");
-            const totalPriceContainer = document.getElementById("total-price");
-
+            const preciosGuardados = JSON.parse(localStorage.getItem('preciosFruta') || 'null');
             // Precios asignados a cada categoría del primer modelo
-            const categoryPrices1 = {
+            const categoryPrices1 = preciosGuardados || {
                 "Manzana": 1500,
                 "Banana": 1200,
                 "Naranja": 1000,
-                "Paipaman": 1000
+                "Limon": 1100,
+                "Ciruela": 1300,
+                "Papa": 1500
             };
 
             // Precios asignados a cada categoría del segundo modelo
@@ -231,6 +432,11 @@
                 "5.3": 5.3,
                 "2.5": 2.5
             };
+
+            const invoiceData = getQueryParam("invoice");
+            const invoiceItems = JSON.parse(decodeURIComponent(invoiceData || "[]"));
+            const invoiceContainer = document.getElementById("invoice-items");
+            const totalPriceContainer = document.getElementById("total-price");
 
             let totalPrice = 0;
 

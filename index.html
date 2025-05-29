@@ -30,8 +30,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script type="text/javascript">
-      const URL1 = "https://teachablemachine.withgoogle.com/models/-InVKyssS/";
-      const URL2 = "https://teachablemachine.withgoogle.com/models/Oa7Wbaw4U/";
+      const URL1 = "https://teachablemachine.withgoogle.com/models/-InVKyssS/"; //frutas
+      const URL2 = "https://teachablemachine.withgoogle.com/models/GR5Y1_tK6/"; //pesos
 
       let model1, model2, webcam, labelContainer1, labelContainer2, maxPredictions1, maxPredictions2;
       let recognizedItem1 = "", recognizedItem2 = "";
@@ -149,7 +149,7 @@
       async function predictModel1(sourceCanvas) {
           const prediction = await model1.predict(sourceCanvas);
           for (let i = 0; i < maxPredictions1; i++) {
-              if (prediction[i].probability > 0.98) {
+              if (prediction[i].probability > 1) {
                   recognizedItem1 = prediction[i].className;
                   break;
               }

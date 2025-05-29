@@ -149,7 +149,7 @@
       async function predictModel1(sourceCanvas) {
           const prediction = await model1.predict(sourceCanvas);
           for (let i = 0; i < maxPredictions1; i++) {
-              if (prediction[i].probability > 1) {
+              if (prediction[i].probability > 0.98) {
                   recognizedItem1 = prediction[i].className;
                   break;
               }
@@ -166,7 +166,7 @@
 
           const prediction = await model2.predict(tempCanvas);
           for (let i = 0; i < maxPredictions2; i++) {
-              if (prediction[i].probability >= 0.98) {
+              if (prediction[i].probability >= 0.99) {
                   recognizedItem2 = prediction[i].className;
                   break;
               }
